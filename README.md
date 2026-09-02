@@ -55,18 +55,45 @@ python sleep_cli.py --cycles
 python sleep_cli.py -c
 ```
 
-### 4. 抽取动态猫娘轻语 (猫娘の囁き)
+### 4. 抽取动态猫娘轻语与互动 (猫娘の囁き)
 
 ```bash
 # 随机获取一句动态轻语（自动联网获取海量名言并猫娘化）
 python sleep_cli.py -q
 
-# 也可以告诉猫娘你的心情 / 主题
+# 向猫娘诉苦或分享心情（自动针对性共情安抚）
 python sleep_cli.py -q "今天写代码好累"
+python sleep_cli.py -q "今天不想学考研内容了，想早点休息睡觉"
 
-# 向猫娘倾诉与互动（支持配置大模型 API Key 深度对话）
+# 专属对话倾诉模式
 python sleep_cli.py --chat "今天被Bug折磨了一整天"
 ```
+
+---
+
+## 🤖 AI 大模型接入案内 / API 配置教程
+
+如果你想让猫娘拥有更强大的 AI 思考与无限畅聊能力，可以接入任何兼容 OpenAI 格式的大模型（如 **DeepSeek**、**OpenAI**、**硅基流动 SiliconFlow**、**Kimi**、**通义千问** 等）。
+
+> 🔒 **安全承诺**：密钥会保存在本地 `config.json` 中，该文件已加入 `.gitignore`，**绝对不会**被上传到 GitHub 远程仓库！
+
+### 快速配置指令：
+
+```bash
+# 1. 接入 DeepSeek 官方大模型（推荐，超高性价比）
+python sleep_cli.py --set-key "sk-你的DeepSeek密钥" --set-base "https://api.deepseek.com/v1" --set-model "deepseek-chat"
+
+# 2. 接入 OpenAI 官方大模型
+python sleep_cli.py --set-key "sk-你的OpenAI密钥" --set-model "gpt-4o-mini"
+
+# 3. 接入 硅基流动 SiliconFlow（支持免费白嫖 Qwen / DeepSeek-V3 等开源模型）
+python sleep_cli.py --set-key "sk-你的密钥" --set-base "https://api.siliconflow.cn/v1" --set-model "deepseek-ai/DeepSeek-V3"
+
+# 4. 查看当前本地 AI 配置状态（密钥自动打码保护）
+python sleep_cli.py --show-config
+```
+
+> 💡 *若不配置 API Key，工具也会自动启用内置的「智能情境共情引擎」与「免配置动漫名言库」，完全不影响日常使用喵！*
 
 ---
 
@@ -78,8 +105,12 @@ python sleep_cli.py --chat "今天被Bug折磨了一整天"
 | `--nap` | - | 开启 20 分钟浅睡小憩 (うたた寝にゃ) | `python sleep_cli.py --nap` |
 | `--deep` | - | 开启 90 分钟深眠物语 (ぐっすり夢の中) | `python sleep_cli.py --deep` |
 | `--cycles` | `-c` | 智能推算最适合ご主人様的苏醒时刻 | `python sleep_cli.py -c` |
-| `-q [话题]` | `--quote` | 抽取动态猫娘轻语（可附带心情） | `python sleep_cli.py -q` |
-| `--chat [话语]`| - | 向猫娘倾诉心事并获取安抚 | `python sleep_cli.py --chat "好累"` |
+| `-q [话题]` | `--quote` | 抽取动态猫娘轻语 / 倾诉心情 | `python sleep_cli.py -q "好累"` |
+| `--chat [话语]`| - | 向猫娘倾诉心事并获取专属 AI 安抚 | `python sleep_cli.py --chat "想睡觉了"` |
+| `--set-key [KEY]`| - | 配置本地 AI API Key（绝不上云） | `python sleep_cli.py --set-key "sk-..."` |
+| `--set-base [URL]`| - | 配置自定义 API Base URL | `python sleep_cli.py --set-base "https://..."` |
+| `--set-model [NAME]`| - | 配置使用的模型名称 | `python sleep_cli.py --set-model "deepseek-chat"` |
+| `--show-config` | - | 查看当前 AI 配置状态 | `python sleep_cli.py --show-config` |
 | `--help` | `-h` | 查看使用案内にゃ | `python sleep_cli.py -h` |
 
 ---
