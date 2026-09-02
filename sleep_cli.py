@@ -275,17 +275,11 @@ CAT_ANIMATION_FRAMES = [
 ]
 
 
-def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str):
-    """动态刷新倒计时屏幕，包括猫娘动画、实时时段、进度条"""
+def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str, first_render: bool = False):
+    """丝滑无闪烁地在原地刷新倒计时屏幕，包括猫娘动画、实时状态、进度条"""
     frame_idx = (elapsed // 2) % len(CAT_ANIMATION_FRAMES)
     f = CAT_ANIMATION_FRAMES[frame_idx]
     
-    cat_art = f"""{PINK}
-{f["lines"][0]}
-{f["lines"][1]}
-{f["lines"][2]}{RESET}
-{PINK}   {f["sub"]}{RESET}
-"""
     mins = total // 60
     secs = total % 60
     dur_text = f"{mins} 分 {secs} 秒" if secs > 0 else f"{mins} 分钟"
@@ -293,45 +287,64 @@ def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_st
     rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
     progress = render_progress(elapsed, total)
 
-    os.system("cls" if os.name == "nt" else "clear")
-    print(cat_art)
-    print(f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}")
-    print(f"{BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}   |   {BOLD}开始时刻:{RESET} {start_time_str}")
-    print("-" * 56)
-    print(f"[ 添い寝中🐾 ] {BOLD}{rem_str}{RESET} {progress}")
-    print("-" * 56)
-    print(f"{YELLOW}提示: 随时按 Ctrl+C 可唤醒猫娘结束小憩喵{RESET}")
+    TOTAL_LINES = 8
+    if not first_render:
+        sys.stdout.write(f"\033[{TOTAL_LINES}A")
+
+    lines = [
+        f"{PINK}{f['lines'][0]}{RESET}\033[K",
+        f"{PINK}{f['lines'][1]}{RESET}\033[K",
+        f"{PINK}{f['lines'][2]}{RESET}\033[K",
+        f"{PINK}   {f['sub']}{RESET}\033[K",
+        f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}   |   {BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}   |   {BOLD}开始时刻:{RESET} {start_time_str}\033[K",
+        f"----------------------------------------------------------------------\033[K",
+        f"[ 添い寝中🐾 ] {BOLD}{rem_str}{RESET} {progress}\033[K",
+        f"{YELLOW}提示: 随时按 Ctrl+C 可唤醒猫娘结束小憩喵{RESET}\033[K"
+    ]
+    sys.stdout.write("\n".join(lines) + "\n")
+    sys.stdout.flush()
 
 
 def live_companion_mode():
-    """桌面动态猫娘摸摸陪伴模式"""
-    print("\n🐾 正在启动桌面动态猫娘伴侣... 随时按 Ctrl+C 退出喵")
-    time.sleep(0.8)
+    """桌面动态猫娘摸摸陪伴模式（丝滑无闪烁）"""
+    print("\n🐾 正在启动桌面动态猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
+    time.sleep(0.5)
+    sys.stdout.write("\033[?25l")  # 隐藏光标
     try:
         t = 0
+        TOTAL_LINES = 7
         while True:
-            frame_idx = t % len(CAT_ANIMATION_FRAMES)
+            frame_idx = (t // 2) % len(CAT_ANIMATION_FRAMES)
             f = CAT_ANIMATION_FRAMES[frame_idx]
-            os.system("cls" if os.name == "nt" else "clear")
-            print(f"""{PINK}
-{f["lines"][0]}
-{f["lines"][1]}
-{f["lines"][2]}{RESET}
-{PINK}   {f["sub"]}{RESET}
-""")
-            print(f"{BOLD}当前时刻:{RESET} {CYAN}{datetime.now().strftime('%H:%M:%S')}{RESET}")
-            print(f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上静静打呼噜 (按 Ctrl+C 退出){RESET}")
+            if t > 0:
+                sys.stdout.write(f"\033[{TOTAL_LINES}A")
+
+            now_str = datetime.now().strftime("%H:%M:%S")
+            lines = [
+                f"{PINK}{f['lines'][0]}{RESET}\033[K",
+                f"{PINK}{f['lines'][1]}{RESET}\033[K",
+                f"{PINK}{f['lines'][2]}{RESET}\033[K",
+                f"{PINK}   {f['sub']}{RESET}\033[K",
+                f"{BOLD}当前时刻:{RESET} {CYAN}{now_str}{RESET}\033[K",
+                f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上静静打呼噜 (按 Ctrl+C 退出){RESET}\033[K",
+                f"----------------------------------------------------------------------\033[K"
+            ]
+            sys.stdout.write("\n".join(lines) + "\n")
+            sys.stdout.flush()
             t += 1
-            time.sleep(1.5)
+            time.sleep(1)
     except KeyboardInterrupt:
         print(f"\n\n{PINK}喵~ 陪伴模式结束啦，ご主人様继续加油哦！(ฅ^･ω･^ฅ){RESET}\n")
+    finally:
+        sys.stdout.write("\033[?25h")  # 恢复光标
 
 
 def timer_mode(seconds: int, title: str = "小憩のじかん", bell: bool = True):
     start_time_str = datetime.now().strftime("%H:%M:%S")
+    sys.stdout.write("\033[?25l")  # 隐藏光标防闪烁
     try:
         for elapsed in range(seconds + 1):
-            render_live_timer_screen(elapsed, seconds, title, start_time_str)
+            render_live_timer_screen(elapsed, seconds, title, start_time_str, first_render=(elapsed == 0))
             if elapsed < seconds:
                 time.sleep(1)
 
@@ -339,9 +352,11 @@ def timer_mode(seconds: int, title: str = "小憩のじかん", bell: bool = Tru
             sys.stdout.write("\a")
             sys.stdout.flush()
 
-        print(f"\n\n{GREEN}叮咚—— ⏰ 时间到了にゃ！ご主人様、起きて起きて〜 充满能量继续加油喵！(ฅ^･ω･^ฅ){RESET}\n")
+        print(f"\n{GREEN}叮咚—— ⏰ 时间到了にゃ！ご主人様、起きて起きて〜 充满能量继续加油喵！(ฅ^･ω･^ฅ){RESET}\n")
     except KeyboardInterrupt:
-        print(f"\n\n{YELLOW}喵！倒计时被提前唤醒了，ご主人様醒得真早にゃ〜{RESET}\n")
+        print(f"\n{YELLOW}喵！倒计时被提前唤醒了，ご主人様醒得真早にゃ〜{RESET}\n")
+    finally:
+        sys.stdout.write("\033[?25h")  # 恢复光标显示
 
 
 def cycle_calculator():
