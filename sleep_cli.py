@@ -206,12 +206,24 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
     return f"“{random.choice(actions)} ご主人様、{random.choice(phrases)} おやすみなさいにゃ〜”"
 
 
-def render_progress(current, total, width=28):
+def render_progress(current, total, width=28, tick=0):
     percent = float(current) / float(total) if total > 0 else 1.0
     filled = int(width * percent)
-    bar = "=" * filled + ">" * (1 if filled < width else 0) + " " * (width - filled - (1 if filled < width else 0))
+    
+    # 动态流光小波浪呼吸效果
+    wave_pos = (tick // 2) % max(1, filled) if filled > 0 else 0
+    bar_chars = []
+    for i in range(filled):
+        if i == wave_pos:
+            bar_chars.append("~")
+        else:
+            bar_chars.append("=")
+    if filled < width:
+        bar_chars.append(">")
+    
+    bar_str = "".join(bar_chars) + " " * (width - len(bar_chars))
     cat_face = "(^･ω･^)" if current < total else "(=^-ω-^=)"
-    return f"[{PINK}{bar}{RESET}] {BOLD}{percent * 100:5.1f}%{RESET} {CYAN}{cat_face}{RESET}"
+    return f"[{PINK}{bar_str}{RESET}] {BOLD}{percent * 100:5.1f}%{RESET} {CYAN}{cat_face}{RESET}"
 
 
 def parse_duration(duration_str: str) -> int:
@@ -231,71 +243,71 @@ def parse_duration(duration_str: str) -> int:
             sys.exit(1)
 
 
-CAT_ANIMATION_FRAMES = [
-    {
-        "lines": [
-            r"       /\_/\  ",
-            r"      ( o.o )  ~ にゃ〜？(眨眨眼)",
-            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
-        ],
-        "sub": "「 闭上眼睛，猫娘会在旁边静静守着ご主人様喵〜 」"
-    },
-    {
-        "lines": [
-            r"       /\_/\  ",
-            r"      ( -.- )  ~ 呼噜呼噜... zzZ (打起瞌睡)",
-            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
-        ],
-        "sub": "「 听着猫猫均匀的呼噜声，安心放松大脑吧にゃ... 」"
-    },
-    {
-        "lines": [
-            r"       /\_/\  ",
-            r"      ( ˘ω˘ )  ~ ぐっすり... (安稳熟睡中)",
-            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
-        ],
-        "sub": "「 梦里会有一整片软乎乎的云朵和小鱼干喵... 」"
-    },
-    {
-        "lines": [
-            r"       /\_/\  ",
-            r"      ( ^.^ )  ~ 蹭蹭主人~ (摇晃着猫尾巴🐾)",
-            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
-        ],
-        "sub": "「 无论发生什么，猫娘都永远最喜欢主人大人だニャン！ 」"
-    },
-    {
-        "lines": [
-            r"       /\_/\  ",
-            r"      ( =•ω•= )/ ~ 伸伸小爪 (猫爪挥挥🐾)",
-            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
-        ],
-        "sub": "「 累了就好好充电，醒来又是元气满满的一天にゃ！ 」"
-    }
+BUBBLE_FRAMES = [
+    "      .    ",
+    "       °   ",
+    "        z  ",
+    "         Z ",
+    "        zzZ",
+    "       Zzz~",
+    "      . ·  "
+]
+
+TAIL_FRAMES = [
+    " ~(   \"  ) ",
+    "  (   \"  )~",
+    "  (   \"  )~~",
+    "  (   \"  )~",
+    " ~(   \"  ) ",
+    "~~(   \"  ) "
+]
+
+EYE_CYCLE = [
+    "( =˘ω˘= )",  # 安稳熟睡
+    "( =˘ω˘= )",
+    "( =˘ω˘= )",
+    "( =˘ω˘= )",
+    "( =˘ω˘= )",
+    "( =-.-= )",   # 微微打盹
+    "( =˘ω˘= )",
+    "( =˘ω˘= )",
+    "( =o.o= )",   # 悄悄眨眼
+    "( =˘ω˘= )",
+    "( =^.^= )",   # 甜甜微笑
+]
+
+STATUS_TIPS = [
+    "「 呼噜呼噜… 猫娘在枕边静静陪着ご主人様小憩にゃ🐾 」",
+    "「 听着猫猫均匀的呼吸声，安心把大脑彻底放空吧喵〜 」",
+    "「 闭上眼睛，梦里有一整片软乎乎的小鱼干云朵だニャン✨ 」",
+    "「 无论今天多辛苦，现在只要在猫猫身边安心休息就好喵💤 」",
+    "「 尾巴轻轻搭在主人手背上，ご主人様安心做个好梦にゃ〜 」"
 ]
 
 
-def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str, first_render: bool = False):
-    """丝滑无闪烁地在原地刷新倒计时屏幕，包括猫娘动画、实时状态、进度条"""
-    frame_idx = (elapsed // 2) % len(CAT_ANIMATION_FRAMES)
-    f = CAT_ANIMATION_FRAMES[frame_idx]
+def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str, tick: int, first_render: bool = False):
+    """6FPS 高帧率丝滑连续动画刷新，包含飘浮呼噜气泡、摆动猫尾巴、眨眼呼吸与流光进度条"""
+    bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
+    tail = TAIL_FRAMES[tick % len(TAIL_FRAMES)]
+    eye = EYE_CYCLE[(tick // 3) % len(EYE_CYCLE)]
+    tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
     
     mins = total // 60
     secs = total % 60
     dur_text = f"{mins} 分 {secs} 秒" if secs > 0 else f"{mins} 分钟"
-    remaining = total - elapsed
+    remaining = max(0, total - elapsed)
     rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
-    progress = render_progress(elapsed, total)
+    progress = render_progress(elapsed, total, tick=tick)
 
     TOTAL_LINES = 8
     if not first_render:
         sys.stdout.write(f"\033[{TOTAL_LINES}A")
 
     lines = [
-        f"{PINK}{f['lines'][0]}{RESET}\033[K",
-        f"{PINK}{f['lines'][1]}{RESET}\033[K",
-        f"{PINK}{f['lines'][2]}{RESET}\033[K",
-        f"{PINK}   {f['sub']}{RESET}\033[K",
+        f"{PINK}          /\\_/\\      {CYAN}{bubble}{RESET}\033[K",
+        f"{PINK}         {eye}   {CYAN}~ (呼噜呼噜... zzZ){RESET}\033[K",
+        f"{PINK}        {tail}   {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+        f"{PINK}   {tip}{RESET}\033[K",
         f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}   |   {BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}   |   {BOLD}开始时刻:{RESET} {start_time_str}\033[K",
         f"----------------------------------------------------------------------\033[K",
         f"[ 添い寝中🐾 ] {BOLD}{rem_str}{RESET} {progress}\033[K",
@@ -306,33 +318,42 @@ def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_st
 
 
 def live_companion_mode():
-    """桌面动态猫娘摸摸陪伴模式（丝滑无闪烁）"""
-    print("\n🐾 正在启动桌面动态猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
+    """桌面高帧率丝滑动态猫娘摸摸陪伴模式"""
+    print("\n🐾 正在启动桌面连贯动态猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
     time.sleep(0.5)
     sys.stdout.write("\033[?25l")  # 隐藏光标
+    fps = 6
+    tick_interval = 1.0 / fps
     try:
-        t = 0
+        tick = 0
         TOTAL_LINES = 7
         while True:
-            frame_idx = (t // 2) % len(CAT_ANIMATION_FRAMES)
-            f = CAT_ANIMATION_FRAMES[frame_idx]
-            if t > 0:
+            t_start = time.monotonic()
+            bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
+            tail = TAIL_FRAMES[tick % len(TAIL_FRAMES)]
+            eye = EYE_CYCLE[(tick // 3) % len(EYE_CYCLE)]
+            tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
+
+            if tick > 0:
                 sys.stdout.write(f"\033[{TOTAL_LINES}A")
 
             now_str = datetime.now().strftime("%H:%M:%S")
             lines = [
-                f"{PINK}{f['lines'][0]}{RESET}\033[K",
-                f"{PINK}{f['lines'][1]}{RESET}\033[K",
-                f"{PINK}{f['lines'][2]}{RESET}\033[K",
-                f"{PINK}   {f['sub']}{RESET}\033[K",
+                f"{PINK}          /\\_/\\      {CYAN}{bubble}{RESET}\033[K",
+                f"{PINK}         {eye}   {CYAN}~ (呼噜呼噜... zzZ){RESET}\033[K",
+                f"{PINK}        {tail}   {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+                f"{PINK}   {tip}{RESET}\033[K",
                 f"{BOLD}当前时刻:{RESET} {CYAN}{now_str}{RESET}\033[K",
-                f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上静静打呼噜 (按 Ctrl+C 退出){RESET}\033[K",
+                f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上轻摇尾巴打呼噜 (按 Ctrl+C 退出){RESET}\033[K",
                 f"----------------------------------------------------------------------\033[K"
             ]
             sys.stdout.write("\n".join(lines) + "\n")
             sys.stdout.flush()
-            t += 1
-            time.sleep(1)
+            tick += 1
+            
+            sleep_dur = tick_interval - (time.monotonic() - t_start)
+            if sleep_dur > 0:
+                time.sleep(sleep_dur)
     except KeyboardInterrupt:
         print(f"\n\n{PINK}喵~ 陪伴模式结束啦，ご主人様继续加油哦！(ฅ^･ω･^ฅ){RESET}\n")
     finally:
@@ -342,11 +363,20 @@ def live_companion_mode():
 def timer_mode(seconds: int, title: str = "小憩のじかん", bell: bool = True):
     start_time_str = datetime.now().strftime("%H:%M:%S")
     sys.stdout.write("\033[?25l")  # 隐藏光标防闪烁
+    fps = 6
+    tick_interval = 1.0 / fps
+    total_ticks = int(seconds * fps)
+    start_mono = time.monotonic()
+    
     try:
-        for elapsed in range(seconds + 1):
-            render_live_timer_screen(elapsed, seconds, title, start_time_str, first_render=(elapsed == 0))
-            if elapsed < seconds:
-                time.sleep(1)
+        for tick in range(total_ticks + 1):
+            elapsed_sec = min(seconds, int(tick / fps))
+            render_live_timer_screen(elapsed_sec, seconds, title, start_time_str, tick, first_render=(tick == 0))
+            if tick < total_ticks:
+                next_target = start_mono + (tick + 1) * tick_interval
+                sleep_dur = next_target - time.monotonic()
+                if sleep_dur > 0:
+                    time.sleep(sleep_dur)
 
         if bell:
             sys.stdout.write("\a")
