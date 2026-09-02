@@ -65,14 +65,30 @@ OFFLINE_QUOTES = [
 ]
 
 
+def respond_by_emotion_matcher(user_topic: str) -> str:
+    """根据主人输入的具体话题进行高情商的猫娘针对性共情安抚。"""
+    t = user_topic.lower()
+    if any(k in t for k in ["考研", "复习", "考试", "学习", "不想学", "看书", "做题", "期末", "上课", "专业课", "英语", "数学"]):
+        return "“（轻轻揉了揉你的头发）ご主人様、考研和学习真的超级辛苦にゃ！今天已经非常非常努力啦，大脑累了效率只会变低喵。现在最明智的决定就是放下课本，安心钻进暖暖的被窝，睡饱了明天大脑才会闪闪发光だニャン！おやすみ〜 (ฅ^･ω･^ฅ)”"
+    elif any(k in t for k in ["bug", "代码", "编程", "加班", "工作", "报错", "项目", "开发", "需求", "部署", "上线"]):
+        return "“（给你递上一杯温热的牛奶）ご主人様、Bug 是修不完的，但主人只有一个にゃ！把报错留给明天的电脑去头疼，现在请立刻盖好小被子，猫娘在旁边守着你入睡喵🐾”"
+    elif any(k in t for k in ["累", "疲惫", "难受", "烦", "压力", "emo", "心累", "抑郁", "委屈", "不开心", "焦虑"]):
+        return "“（把软乎乎的猫耳朵和尾巴凑到你怀里）ご主人様、抱抱~ 辛苦啦！在猫娘这里可以放下所有防备，不用假装坚强にゃ。闭上眼睛，今晚把一切烦恼都交给猫猫来守护吧喵🌙”"
+    elif any(k in t for k in ["睡", "困", "晚安", "床", "休息", "眠", "小憩"]):
+        return "“呼噜呼噜… 猫娘已经在被窝里给ご主人様暖好床啦！快来躺下，今晚一定能做个香甜美梦にゃ〜 おやすみなさい✨”"
+    else:
+        return f"“（轻轻摇了摇毛茸茸的尾巴）ご主人様说的心情猫娘都听到啦！『{user_topic}』的事先放一放，无论发生什么，猫娘都永远站在主人这边喵〜 听话，先好好睡个好觉だニャン (ฅ^･ω･^ฅ)”"
+
+
 def fetch_ai_whisper(user_topic: str = "") -> str:
     """
     多层混合猫娘轻语引擎：
     1. 若配置了 OpenAI / DeepSeek / Gemini / Ollama API 则调用真实大模型生成；
-    2. 否则免费调用 Hitokoto 动漫/文学名言库并由猫娘萌化演绎；
-    3. 离线/超时时根据时间与情境动态合成独一无二的猫娘语录。
+    2. 若用户输入了心里话/心情，使用高情商语义匹配器给予针对性共情安抚；
+    3. 若未输入具体话题，从 Hitokoto 动漫/文学库实时获取今日名言并萌化演播；
+    4. 离线保底时段自适应生成。
     """
-    # 1. 尝试调用用户配置的 AI API
+    # 1. 尝试调用用户配置的真实 AI 大模型
     api_key = os.getenv("AI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY")
     api_base = os.getenv("AI_API_BASE", "https://api.openai.com/v1")
 
@@ -84,7 +100,7 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
                 "messages": [
                     {
                         "role": "system",
-                        "content": "你是一只陪伴在主人身边的软萌二次元猫娘。称呼用户为'ご主人様'或'主人大人'，句尾偶尔带'にゃ'或'喵~'，语气极度温柔、贴心、治愈。回复保持在40字以内，中日双语皆可。"
+                        "content": "你是一只陪伴在主人身边的软萌二次元猫娘。称呼用户为'ご主人様'或'主人大人'，句尾偶尔带'にゃ'或'喵~'，语气极度温柔、贴心、治愈。请针对主人的话题给出极度暖心的回应，字数在50字以内。"
                     },
                     {"role": "user", "content": prompt}
                 ],
@@ -103,7 +119,11 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
         except Exception:
             pass
 
-    # 2. 免费免配置：从 Hitokoto 动漫/文学库实时抓取灵感并猫娘化
+    # 2. 如果用户输入了具体的话题/心情，执行精准共情安慰（避免出现不相关的古诗）
+    if user_topic.strip():
+        return respond_by_emotion_matcher(user_topic.strip())
+
+    # 3. 如果用户仅输入 -q（无话题），从 Hitokoto 动漫/文学库实时抓取灵感并猫娘化
     try:
         url = "https://v1.hitokoto.cn/?c=a&c=b&c=d&c=i&encode=json"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -124,7 +144,7 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
     except Exception:
         pass
 
-    # 3. 离线保底：时段 + 动作程序化动态组合生成
+    # 4. 离线保底：时段 + 动作程序化动态组合生成
     actions = [
         "（用毛茸茸的脑袋蹭了蹭你的手心）",
         "（轻轻摇晃着猫尾巴，趴在你身边）",
