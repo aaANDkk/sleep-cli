@@ -231,24 +231,107 @@ def parse_duration(duration_str: str) -> int:
             sys.exit(1)
 
 
-def timer_mode(seconds: int, title: str = "小憩のじかん", bell: bool = True):
-    print(get_banner())
-    mins = seconds // 60
-    secs = seconds % 60
-    dur_text = f"{mins} 分 {secs} 秒" if secs > 0 else f"{mins} 分钟"
-    print(f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}")
-    print(f"{BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}")
-    print(f"{BOLD}开始时刻:{RESET} {datetime.now().strftime('%H:%M:%S')}")
-    print(f"{YELLOW}猫娘提示:{RESET} 闭上眼睛，猫娘会在旁边守着ご主人様にゃ〜")
-    print("-" * 52)
+CAT_ANIMATION_FRAMES = [
+    {
+        "lines": [
+            r"       /\_/\  ",
+            r"      ( o.o )  ~ にゃ〜？(眨眨眼)",
+            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
+        ],
+        "sub": "「 闭上眼睛，猫娘会在旁边静静守着ご主人様喵〜 」"
+    },
+    {
+        "lines": [
+            r"       /\_/\  ",
+            r"      ( -.- )  ~ 呼噜呼噜... zzZ (打起瞌睡)",
+            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
+        ],
+        "sub": "「 听着猫猫均匀的呼噜声，安心放松大脑吧にゃ... 」"
+    },
+    {
+        "lines": [
+            r"       /\_/\  ",
+            r"      ( ˘ω˘ )  ~ ぐっすり... (安稳熟睡中)",
+            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
+        ],
+        "sub": "「 梦里会有一整片软乎乎的云朵和小鱼干喵... 」"
+    },
+    {
+        "lines": [
+            r"       /\_/\  ",
+            r"      ( ^.^ )  ~ 蹭蹭主人~ (摇晃着猫尾巴🐾)",
+            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
+        ],
+        "sub": "「 无论发生什么，猫娘都永远最喜欢主人大人だニャン！ 」"
+    },
+    {
+        "lines": [
+            r"       /\_/\  ",
+            r"      ( =•ω•= )/ ~ 伸伸小爪 (猫爪挥挥🐾)",
+            r"       > ^ <   [ sleep-cli · 猫娘添い寝中 ]",
+        ],
+        "sub": "「 累了就好好充电，醒来又是元气满满的一天にゃ！ 」"
+    }
+]
 
+
+def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str):
+    """动态刷新倒计时屏幕，包括猫娘动画、实时时段、进度条"""
+    frame_idx = (elapsed // 2) % len(CAT_ANIMATION_FRAMES)
+    f = CAT_ANIMATION_FRAMES[frame_idx]
+    
+    cat_art = f"""{PINK}
+{f["lines"][0]}
+{f["lines"][1]}
+{f["lines"][2]}{RESET}
+{PINK}   {f["sub"]}{RESET}
+"""
+    mins = total // 60
+    secs = total % 60
+    dur_text = f"{mins} 分 {secs} 秒" if secs > 0 else f"{mins} 分钟"
+    remaining = total - elapsed
+    rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
+    progress = render_progress(elapsed, total)
+
+    os.system("cls" if os.name == "nt" else "clear")
+    print(cat_art)
+    print(f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}")
+    print(f"{BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}   |   {BOLD}开始时刻:{RESET} {start_time_str}")
+    print("-" * 56)
+    print(f"[ 添い寝中🐾 ] {BOLD}{rem_str}{RESET} {progress}")
+    print("-" * 56)
+    print(f"{YELLOW}提示: 随时按 Ctrl+C 可唤醒猫娘结束小憩喵{RESET}")
+
+
+def live_companion_mode():
+    """桌面动态猫娘摸摸陪伴模式"""
+    print("\n🐾 正在启动桌面动态猫娘伴侣... 随时按 Ctrl+C 退出喵")
+    time.sleep(0.8)
+    try:
+        t = 0
+        while True:
+            frame_idx = t % len(CAT_ANIMATION_FRAMES)
+            f = CAT_ANIMATION_FRAMES[frame_idx]
+            os.system("cls" if os.name == "nt" else "clear")
+            print(f"""{PINK}
+{f["lines"][0]}
+{f["lines"][1]}
+{f["lines"][2]}{RESET}
+{PINK}   {f["sub"]}{RESET}
+""")
+            print(f"{BOLD}当前时刻:{RESET} {CYAN}{datetime.now().strftime('%H:%M:%S')}{RESET}")
+            print(f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上静静打呼噜 (按 Ctrl+C 退出){RESET}")
+            t += 1
+            time.sleep(1.5)
+    except KeyboardInterrupt:
+        print(f"\n\n{PINK}喵~ 陪伴模式结束啦，ご主人様继续加油哦！(ฅ^･ω･^ฅ){RESET}\n")
+
+
+def timer_mode(seconds: int, title: str = "小憩のじかん", bell: bool = True):
+    start_time_str = datetime.now().strftime("%H:%M:%S")
     try:
         for elapsed in range(seconds + 1):
-            remaining = seconds - elapsed
-            rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
-            progress = render_progress(elapsed, seconds)
-            sys.stdout.write(f"\r[ 睡眠中🐾 ] {BOLD}{rem_str}{RESET} {progress} ")
-            sys.stdout.flush()
+            render_live_timer_screen(elapsed, seconds, title, start_time_str)
             if elapsed < seconds:
                 time.sleep(1)
 
@@ -292,6 +375,7 @@ def main():
     parser.add_argument("duration", nargs="?", default="25m", help="倒计时时长（如 25m, 1h, 90m, 45s，默认 25m）")
     parser.add_argument("--nap", action="store_true", help="开启 20 分钟猫猫浅睡小憩（うたた寝にゃ）")
     parser.add_argument("--deep", action="store_true", help="开启 90 分钟猫娘深眠物语（ぐっすり夢の中）")
+    parser.add_argument("--live", "--pet", action="store_true", dest="live", help="启动桌面动态猫娘陪伴模式（呼吸、眨眼、打呼噜）")
     parser.add_argument("-c", "--cycles", action="store_true", help="推算适合ご主人様的最佳苏醒时刻（にゃんこ計算）")
     parser.add_argument("-q", "--quote", nargs="?", const="", help="听猫娘说一句温柔轻语，可传入心情/话题（如 -q '今天好累'）")
     parser.add_argument("--chat", type=str, help="和猫娘进行专属对话（如 --chat '今天写代码被Bug折磨了'）")
@@ -317,9 +401,10 @@ def main():
     elif args.help:
         print(get_banner())
         print("使用案内 (使い方):")
-        print("  python sleep_cli.py [时长]         开启指定时长的陪睡倒计时（如 25m, 1h, 45s）")
+        print("  python sleep_cli.py [时长]         开启指定时长的陪睡倒计时（动态猫娘实时陪伴）")
         print("  python sleep_cli.py --nap          浅睡小憩 · 20 分钟猫猫充电 (うたた寝にゃ)")
         print("  python sleep_cli.py --deep         深眠物语 · 90 分钟完整周期 (ぐっすり夢の中)")
+        print("  python sleep_cli.py --live         桌面动态猫娘伴侣模式（实时呼吸、眨眼、打呼噜）")
         print("  python sleep_cli.py -c, --cycles   智能推算最适合ご主人様的苏醒时刻喵")
         print("  python sleep_cli.py -q, --quote    抽取一句动态猫娘の温柔轻语（支持联网与AI）")
         print("  python sleep_cli.py --chat [话语]  向猫娘倾诉心事，获取专属安抚回答喵")
@@ -327,6 +412,8 @@ def main():
         print("  python sleep_cli.py --show-config  查看当前 AI 配置")
         print("  python sleep_cli.py -h, --help     查看本使用案内にゃ")
         print()
+    elif args.live:
+        live_companion_mode()
     elif args.cycles:
         cycle_calculator()
     elif args.chat is not None:

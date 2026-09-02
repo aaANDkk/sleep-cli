@@ -10,6 +10,8 @@
 
 ## 機能紹介 / 功能介绍
 
+- **动态猫娘伴侣（Live ASCII Animation）**：倒计时期间小猫会在终端**实时呼吸、眨眼、打呼噜（zzZ）、摇尾巴、伸懒腰**，生动活泼！
+- **桌面动态摸猫模式（`--live`）**：随时化身为桌面上默默陪伴你工作或发呆的动态呼噜猫猫。
 - **倒计时と进度条**：支持秒 (s)、分 (m)、小时 (h) 自由设定，终端显示猫猫字符进度与小猫表情（`(^･ω･^)`）。
 - **猫娘の小憩モード**：内置 20 分钟猫猫浅睡小憩（`--nap`）与 90 分钟完整深眠物语（`--deep`）。
 - **にゃんこ周期計算**：基于 90 分钟 R.E.M 生理律动，为ご主人様推算最舒服的苏醒时间点。
@@ -51,10 +53,10 @@ python --version
 
 ## 使い方 / 常用指令与功能演示
 
-### 1. 基础倒计时（小憩 / 专注）
+### 1. 基础倒计时（小憩 / 专注 · 动态猫娘陪睡）
 
 ```bash
-# 默认 25 分钟小憩
+# 默认 25 分钟小憩（倒计时期间猫娘会实时呼吸眨眼打呼噜喵）
 python sleep_cli.py 25m
 
 # 自定义时长（支持 s 秒 / m 分 / h 小时）
@@ -72,7 +74,14 @@ python sleep_cli.py --nap
 python sleep_cli.py --deep
 ```
 
-### 3. 最佳苏醒时刻の推算 (にゃんこ計算機)
+### 3. 桌面动态摸猫模式 (Live Companion)
+
+```bash
+# 开启桌面动态猫娘陪伴（常驻在终端角落打呼噜、眨眼陪伴，按 Ctrl+C 退出）
+python sleep_cli.py --live
+```
+
+### 4. 最佳苏醒时刻の推算 (にゃんこ計算機)
 
 计算如果现在和猫娘一起入睡，在哪些时刻醒来最神清气爽喵：
 
@@ -82,7 +91,7 @@ python sleep_cli.py --cycles
 python sleep_cli.py -c
 ```
 
-### 4. 抽取动态猫娘轻语与互动 (猫娘の囁き)
+### 5. 抽取动态猫娘轻语与互动 (猫娘の囁き)
 
 ```bash
 # 随机获取一句动态轻语（自动联网获取海量名言并猫娘化）
@@ -92,7 +101,7 @@ python sleep_cli.py -q
 python sleep_cli.py -q "今天写代码好累"
 python sleep_cli.py -q "今天不想学考研内容了，想早点休息睡觉"
 
-# 专属对话倾诉模式
+# 专属对话倾诉模式（调用本地配置的 DeepSeek/OpenAI 大模型）
 python sleep_cli.py --chat "今天被Bug折磨了一整天"
 ```
 
@@ -128,9 +137,10 @@ python sleep_cli.py --show-config
 
 | 参数 | 简写 | 说明 | 示例 |
 | --- | --- | --- | --- |
-| `duration` | - | 自定义倒计时时长（默认 25m） | `python sleep_cli.py 30m` |
+| `duration` | - | 自定义倒计时时长（动态猫娘实时陪伴） | `python sleep_cli.py 30m` |
 | `--nap` | - | 开启 20 分钟浅睡小憩 (うたた寝にゃ) | `python sleep_cli.py --nap` |
 | `--deep` | - | 开启 90 分钟深眠物语 (ぐっすり夢の中) | `python sleep_cli.py --deep` |
+| `--live` | `--pet` | 启动桌面动态猫娘陪伴模式 | `python sleep_cli.py --live` |
 | `--cycles` | `-c` | 智能推算最适合ご主人様的苏醒时刻 | `python sleep_cli.py -c` |
 | `-q [话题]` | `--quote` | 抽取动态猫娘轻语 / 倾诉心情 | `python sleep_cli.py -q "好累"` |
 | `--chat [话语]`| - | 向猫娘倾诉心事并获取专属 AI 安抚 | `python sleep_cli.py --chat "想睡觉了"` |
