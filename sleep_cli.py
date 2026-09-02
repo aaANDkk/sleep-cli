@@ -80,6 +80,49 @@ def respond_by_emotion_matcher(user_topic: str) -> str:
         return f"“（轻轻摇了摇毛茸茸的尾巴）ご主人様说的心情猫娘都听到啦！『{user_topic}』的事先放一放，无论发生什么，猫娘都永远站在主人这边喵〜 听话，先好好睡个好觉だニャン (ฅ^･ω･^ฅ)”"
 
 
+CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+
+
+def load_config() -> dict:
+    """读取本地 config.json 或环境变量配置"""
+    config = {
+        "api_key": os.getenv("AI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY") or "",
+        "api_base": os.getenv("AI_API_BASE", "https://api.openai.com/v1"),
+        "model": os.getenv("AI_MODEL", "gpt-3.5-turbo")
+    }
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                user_cfg = json.load(f)
+                for k, v in user_cfg.items():
+                    if v:
+                        config[k] = v
+        except Exception:
+            pass
+    return config
+
+
+def save_config(api_key: str = None, api_base: str = None, model: str = None):
+    """保存配置到本地 config.json (已被 .gitignore 保护，绝对不会上传到远程仓库)"""
+    cfg = {}
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+        except Exception:
+            pass
+    if api_key is not None:
+        cfg["api_key"] = api_key
+    if api_base is not None:
+        cfg["api_base"] = api_base
+    if model is not None:
+        cfg["model"] = model
+
+    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, ensure_ascii=False, indent=2)
+    print(f"\n{GREEN}✨ API 配置已成功保存在本地 config.json にゃ！（已被 .gitignore 保护，绝不会被推送到 GitHub）{RESET}\n")
+
+
 def fetch_ai_whisper(user_topic: str = "") -> str:
     """
     多层混合猫娘轻语引擎：
@@ -88,31 +131,33 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
     3. 若未输入具体话题，从 Hitokoto 动漫/文学库实时获取今日名言并萌化演播；
     4. 离线保底时段自适应生成。
     """
-    # 1. 尝试调用用户配置的真实 AI 大模型
-    api_key = os.getenv("AI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("DEEPSEEK_API_KEY")
-    api_base = os.getenv("AI_API_BASE", "https://api.openai.com/v1")
+    # 1. 尝试调用用户配置的真实 AI 大模型（从 config.json 或环境变量读取）
+    cfg = load_config()
+    api_key = cfg.get("api_key", "").strip()
+    api_base = cfg.get("api_base", "https://api.openai.com/v1").rstrip("/")
+    model_name = cfg.get("model", "gpt-3.5-turbo")
 
     if api_key:
         try:
             prompt = user_topic if user_topic else "请给主人说一句简短的治愈晚安或小憩鼓励的话"
             req_data = {
-                "model": os.getenv("AI_MODEL", "gpt-3.5-turbo"),
+                "model": model_name,
                 "messages": [
                     {
                         "role": "system",
-                        "content": "你是一只陪伴在主人身边的软萌二次元猫娘。称呼用户为'ご主人様'或'主人大人'，句尾偶尔带'にゃ'或'喵~'，语气极度温柔、贴心、治愈。请针对主人的话题给出极度暖心的回应，字数在50字以内。"
+                        "content": "你是一只陪伴在主人身边的软萌二次元猫娘。称呼用户为'ご主人様'或'主人大人'，句尾带'にゃ'或'喵~'，语气极度温柔、贴心、治愈、娇憨。请针对主人的话题给出极度暖心的回应，字数在60字以内。"
                     },
                     {"role": "user", "content": prompt}
                 ],
-                "max_tokens": 100,
+                "max_tokens": 150,
                 "temperature": 0.8
             }
             req = urllib.request.Request(
                 f"{api_base}/chat/completions",
                 data=json.dumps(req_data).encode("utf-8"),
-                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "User-Agent": "sleep-cli/1.0"}
             )
-            with urllib.request.urlopen(req, timeout=3) as resp:
+            with urllib.request.urlopen(req, timeout=4) as resp:
                 res_json = json.loads(resp.read().decode("utf-8"))
                 reply = res_json["choices"][0]["message"]["content"].strip()
                 return f"“{reply}”"
@@ -250,11 +295,26 @@ def main():
     parser.add_argument("-c", "--cycles", action="store_true", help="推算适合ご主人様的最佳苏醒时刻（にゃんこ計算）")
     parser.add_argument("-q", "--quote", nargs="?", const="", help="听猫娘说一句温柔轻语，可传入心情/话题（如 -q '今天好累'）")
     parser.add_argument("--chat", type=str, help="和猫娘进行专属对话（如 --chat '今天写代码被Bug折磨了'）")
+    parser.add_argument("--set-key", type=str, help="设置 AI API Key 并保存到本地 config.json（不会上传 GitHub）")
+    parser.add_argument("--set-base", type=str, help="设置 AI 接口 Base URL（如 https://api.deepseek.com/v1）")
+    parser.add_argument("--set-model", type=str, help="设置 AI 模型名称（如 deepseek-chat 或 gpt-4o-mini）")
+    parser.add_argument("--show-config", action="store_true", help="查看当前的 AI 配置状态にゃ")
     parser.add_argument("-h", "--help", action="store_true", help="查看使用案内并退出にゃ")
 
     args = parser.parse_args()
 
-    if args.help:
+    if args.set_key or args.set_base or args.set_model:
+        save_config(api_key=args.set_key, api_base=args.set_base, model=args.set_model)
+        return
+    elif args.show_config:
+        cfg = load_config()
+        masked_key = (cfg["api_key"][:6] + "..." + cfg["api_key"][-4:]) if len(cfg.get("api_key", "")) > 10 else ("已配置" if cfg.get("api_key") else "未配置")
+        print(f"\n{BOLD}猫娘 AI 配置状态:{RESET}")
+        print(f"  • API Key:  {CYAN}{masked_key}{RESET}")
+        print(f"  • API Base: {CYAN}{cfg.get('api_base')}{RESET}")
+        print(f"  • AI Model: {CYAN}{cfg.get('model')}{RESET}\n")
+        return
+    elif args.help:
         print(get_banner())
         print("使用案内 (使い方):")
         print("  python sleep_cli.py [时长]         开启指定时长的陪睡倒计时（如 25m, 1h, 45s）")
@@ -263,6 +323,8 @@ def main():
         print("  python sleep_cli.py -c, --cycles   智能推算最适合ご主人様的苏醒时刻喵")
         print("  python sleep_cli.py -q, --quote    抽取一句动态猫娘の温柔轻语（支持联网与AI）")
         print("  python sleep_cli.py --chat [话语]  向猫娘倾诉心事，获取专属安抚回答喵")
+        print("  python sleep_cli.py --set-key [KEY] 在本地配置 AI Key（绝不上传 GitHub）")
+        print("  python sleep_cli.py --show-config  查看当前 AI 配置")
         print("  python sleep_cli.py -h, --help     查看本使用案内にゃ")
         print()
     elif args.cycles:
