@@ -1,0 +1,10 @@
+﻿# Configuration and secrets
+.env
+config.json
+*.key
+*.secret
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.class
