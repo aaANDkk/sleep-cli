@@ -62,11 +62,13 @@ def get_time_greeting() -> str:
 def get_banner() -> str:
     greeting = get_time_greeting()
     return f"""
-{PINK}             ∧＿∧{RESET}             {GOLD}✦ {CYAN}· ° {HOT_PINK}zzZ{RESET}
-{PINK}            ({BLUSH} =˘ω˘= {PINK}){RESET}          {CYAN}~ (呼噜呼噜... 添い寝中){RESET}
-{PURPLE}          .─/{WHITE}  つ づ{PURPLE}─.{RESET}        {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}
-{MINT}         ({PURPLE}   (   "   )   {MINT}){RESET}     {GOLD}✨ 今夜もいい夢を見てにゃ〜{RESET}
-{PURPLE}          `─'~~~~~~~~~`─'{RESET}
+{PINK}             /\\_/\\                    /\\_/\\{RESET}       {GOLD}✦ {CYAN}· ° {HOT_PINK}zzZ{RESET}
+{PINK}            /  •  \\     {PURPLE}/|  ∧＿∧  |\\{RESET}     {PINK}/  •  \\{RESET}      {CYAN}~ (呼噜呼噜... 添い寝中){RESET}
+{PURPLE}           (   /\\  )   (  {BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}  )   (  /\\   ){RESET}     {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}
+{PINK}            \\ (  \\ \\    \\  / {GOLD}>🎀<{PINK} \\  /    / /  ) /{RESET}      {GOLD}✨ 今夜もいい夢を見てにゃ〜{RESET}
+{PURPLE}             `─\\  \\─.  .─/{WHITE}   つ づ   {PURPLE}\\─. .─/  /─'{RESET}
+{MINT}                `──'  ({PURPLE}   (    "   )   {MINT})  `──'{RESET}
+{PURPLE}                       `─'~~~~~~~~~`─'{RESET}
 {PINK}   {greeting}{RESET}
 """
 
@@ -290,24 +292,24 @@ BUBBLE_FRAMES = [
 ]
 
 TAIL_AND_BLANKET = [
-    f"{MINT}         ({PURPLE}   (   \"   )   {MINT}){RESET}     {GOLD}✨ 添い寝中🐾{RESET}",
-    f"{MINT}         ({PURPLE}   (   \"   )~  {MINT}){RESET}     {GOLD}✨ 摇尾巴🐾{RESET}",
-    f"{MINT}         ({PURPLE}   (   \"   )~~ {MINT}){RESET}     {GOLD}✨ 蹭蹭主人🐾{RESET}",
-    f"{MINT}         ({PURPLE}   (   \"   )~  {MINT}){RESET}     {GOLD}✨ 摇尾巴🐾{RESET}",
-    f"{MINT}         ({PURPLE}  ~(   \"   )   {MINT}){RESET}     {GOLD}✨ 添い寝中🐾{RESET}",
-    f"{MINT}         ({PURPLE} ~~(   \"   )   {MINT}){RESET}     {GOLD}✨ 伸懒腰🐾{RESET}"
+    (f"{MINT}                `──'  ({PURPLE}   (    \"   )   {MINT})  `──'{RESET}", f"{GOLD}✨ 添い寝中🐾{RESET}"),
+    (f"{MINT}                `──'  ({PURPLE}   (    \"   )~  {MINT})  `──'{RESET}", f"{GOLD}✨ 摇尾巴🐾{RESET}"),
+    (f"{MINT}                `──'  ({PURPLE}   (    \"   )~~ {MINT})  `──'{RESET}", f"{GOLD}✨ 蹭蹭主人🐾{RESET}"),
+    (f"{MINT}                `──'  ({PURPLE}   (    \"   )~  {MINT})  `──'{RESET}", f"{GOLD}✨ 摇尾巴🐾{RESET}"),
+    (f"{MINT}                `──'  ({PURPLE}  ~(    \"   )   {MINT})  `──'{RESET}", f"{GOLD}✨ 添い寝中🐾{RESET}"),
+    (f"{MINT}                `──'  ({PURPLE} ~~(    \"   )   {MINT})  `──'{RESET}", f"{GOLD}✨ 伸懒腰🐾{RESET}")
 ]
 
 EYE_CYCLE = [
-    (f"{BLUSH} =˘ω˘= {PINK}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
-    (f"{BLUSH} =˘ω˘= {PINK}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
-    (f"{BLUSH} =˘ω˘= {PINK}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
-    (f"{BLUSH} =-.-= {PINK}", f"{CYAN}~ (微微打盹... にゃ){RESET}"),
-    (f"{BLUSH} =˘ω˘= {PINK}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
-    (f"{BLUSH} =o.o= {PINK}", f"{CYAN}~ (眨眨大眼睛... 喵？){RESET}"),
-    (f"{BLUSH} =˘ω˘= {PINK}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
-    (f"{BLUSH} =^ω~= {PINK}", f"{CYAN}~ (悄悄Wink... ✨){RESET}"),
-    (f"{BLUSH} =^.^= {PINK}", f"{CYAN}~ (甜甜微笑... 蹭蹭){RESET}"),
+    (f"{BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
+    (f"{BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
+    (f"{BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
+    (f"{BLUSH}( ˶- . -˶ ){PURPLE}", f"{CYAN}~ (微微打盹... にゃ){RESET}"),
+    (f"{BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
+    (f"{BLUSH}( ˶｡•ㅅ•｡˶ ){PURPLE}", f"{CYAN}~ (大眼睛眨巴... 喵？){RESET}"),
+    (f"{BLUSH}( ˶˘ ᵕ ˘˶ ){PURPLE}", f"{CYAN}~ (呼噜呼噜... 添い寝中){RESET}"),
+    (f"{BLUSH}( ˶> ᴗ ~˶ ){PURPLE}", f"{CYAN}~ (悄悄Wink... ✨){RESET}"),
+    (f"{BLUSH}( ˶• ֊ •˶ ){PURPLE}", f"{CYAN}~ (甜甜微笑... 蹭蹭){RESET}"),
 ]
 
 STATUS_TIPS = [
@@ -320,9 +322,9 @@ STATUS_TIPS = [
 
 
 def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str, tick: int, first_render: bool = False):
-    """6FPS 高帧率丝滑全彩猫娘动画刷新"""
+    """6FPS 高帧率丝滑全彩拟人化猫娘动画刷新"""
     bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
-    tail_line = TAIL_AND_BLANKET[tick % len(TAIL_AND_BLANKET)]
+    tail_line, tail_action = TAIL_AND_BLANKET[tick % len(TAIL_AND_BLANKET)]
     eye_str, eye_action = EYE_CYCLE[(tick // 3) % len(EYE_CYCLE)]
     tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
     
@@ -333,16 +335,18 @@ def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_st
     rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
     progress = render_progress(elapsed, total, tick=tick)
 
-    TOTAL_LINES = 10
+    TOTAL_LINES = 12
     if not first_render:
         sys.stdout.write(f"\033[{TOTAL_LINES}A")
 
     lines = [
-        f"{PINK}             ∧＿∧{RESET}             {bubble}\033[K",
-        f"{PINK}            ({eye_str}){RESET}          {eye_action}\033[K",
-        f"{PURPLE}          .─/{WHITE}  つ づ{PURPLE}─.{RESET}        {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+        f"{PINK}             /\\_/\\                    /\\_/\\{RESET}       {bubble}\033[K",
+        f"{PINK}            /  •  \\     {PURPLE}/|  ∧＿∧  |\\{RESET}     {PINK}/  •  \\{RESET}      {eye_action}\033[K",
+        f"{PURPLE}           (   /\\  )   (  {eye_str}  )   (  /\\   ){RESET}     {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+        f"{PINK}            \\ (  \\ \\    \\  / {GOLD}>🎀<{PINK} \\  /    / /  ) /{RESET}      {tail_action}\033[K",
+        f"{PURPLE}             `─\\  \\─.  .─/{WHITE}   つ づ   {PURPLE}\\─. .─/  /─'{RESET}\033[K",
         f"{tail_line}\033[K",
-        f"{PURPLE}          `─'~~~~~~~~~`─'{RESET}\033[K",
+        f"{PURPLE}                       `─'~~~~~~~~~`─'{RESET}\033[K",
         f"{PINK}   {tip}{RESET}\033[K",
         f"{BOLD}当前模式:{RESET} {PINK}{title}{RESET}   |   {BOLD}陪睡时长:{RESET} {CYAN}{dur_text}{RESET}   |   {BOLD}开始时刻:{RESET} {start_time_str}\033[K",
         f"----------------------------------------------------------------------\033[K",
@@ -354,19 +358,19 @@ def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_st
 
 
 def live_companion_mode():
-    """桌面高帧率丝滑全彩动态猫娘摸摸陪伴模式"""
-    print("\n🐾 正在启动桌面全彩连贯动态猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
+    """桌面高帧率丝滑全彩拟人化动态猫娘摸摸陪伴模式"""
+    print("\n🐾 正在启动桌面全彩拟人化猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
     time.sleep(0.5)
     sys.stdout.write("\033[?25l")  # 隐藏光标
     fps = 6
     tick_interval = 1.0 / fps
     try:
         tick = 0
-        TOTAL_LINES = 9
+        TOTAL_LINES = 11
         while True:
             t_start = time.monotonic()
             bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
-            tail_line = TAIL_AND_BLANKET[tick % len(TAIL_AND_BLANKET)]
+            tail_line, tail_action = TAIL_AND_BLANKET[tick % len(TAIL_AND_BLANKET)]
             eye_str, eye_action = EYE_CYCLE[(tick // 3) % len(EYE_CYCLE)]
             tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
 
@@ -375,11 +379,13 @@ def live_companion_mode():
 
             now_str = datetime.now().strftime("%H:%M:%S")
             lines = [
-                f"{PINK}             ∧＿∧{RESET}             {bubble}\033[K",
-                f"{PINK}            ({eye_str}){RESET}          {eye_action}\033[K",
-                f"{PURPLE}          .─/{WHITE}  つ づ{PURPLE}─.{RESET}        {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+                f"{PINK}             /\\_/\\                    /\\_/\\{RESET}       {bubble}\033[K",
+                f"{PINK}            /  •  \\     {PURPLE}/|  ∧＿∧  |\\{RESET}     {PINK}/  •  \\{RESET}      {eye_action}\033[K",
+                f"{PURPLE}           (   /\\  )   (  {eye_str}  )   (  /\\   ){RESET}     {BOLD}[ sleep-cli · 猫娘伴侣 ]{RESET}\033[K",
+                f"{PINK}            \\ (  \\ \\    \\  / {GOLD}>🎀<{PINK} \\  /    / /  ) /{RESET}      {tail_action}\033[K",
+                f"{PURPLE}             `─\\  \\─.  .─/{WHITE}   つ づ   {PURPLE}\\─. .─/  /─'{RESET}\033[K",
                 f"{tail_line}\033[K",
-                f"{PURPLE}          `─'~~~~~~~~~`─'{RESET}\033[K",
+                f"{PURPLE}                       `─'~~~~~~~~~`─'{RESET}\033[K",
                 f"{PINK}   {tip}{RESET}\033[K",
                 f"{BOLD}当前时刻:{RESET} {CYAN}{now_str}{RESET}\033[K",
                 f"{YELLOW}🐾 动态陪伴中... 猫娘正在主人的桌面上轻摇尾巴打呼噜 (按 Ctrl+C 退出){RESET}\033[K",
