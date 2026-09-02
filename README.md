@@ -22,7 +22,34 @@
 
 ---
 
-## 使い方 / 使用方法
+## 🚀 安装与快速上手 / Quick Start
+
+### 第一步：将项目下载到本地文件夹
+
+打开你常用的终端（Windows Terminal / PowerShell / CMD / Git Bash），运行以下命令将项目克隆到本地并进入文件夹：
+
+```bash
+# 1. 克隆项目到本地
+git clone https://github.com/aaANDkk/sleep-cli.git
+
+# 2. 打开终端，进入项目文件夹
+cd sleep-cli
+```
+
+> 💡 **免 Git 方式**：也可以直接在 GitHub 页面点击右上角绿色的 **Code** -> **Download ZIP**，下载解压后，在解压后的文件夹内空白处右键选择 **“在终端中打开 (Open in Terminal)”** 即可。
+
+### 第二步：环境准备
+
+本项目基于 **Python 3 标准库** 打造，**无需执行 `pip install` 安装任何第三方依赖库**，纯绿色零污染！  
+只需确保电脑已安装 Python（推荐 Python 3.7+）：
+
+```bash
+python --version
+```
+
+---
+
+## 使い方 / 常用指令与功能演示
 
 ### 1. 基础倒计时（小憩 / 专注）
 
