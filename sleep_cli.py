@@ -107,6 +107,8 @@ def cycle_calculator():
 def main():
     parser = argparse.ArgumentParser(description="sleep-cli: Terminal timer and sleep cycle calculator.")
     parser.add_argument("duration", nargs="?", default="25m", help="Duration to sleep/focus (e.g. 25m, 1h, 90m, 45s).")
+    parser.add_argument("--nap", action="store_true", help="Quick 20-minute power nap mode.")
+    parser.add_argument("--deep", action="store_true", help="Full 90-minute REM sleep cycle mode.")
     parser.add_argument("-c", "--cycles", action="store_true", help="Calculate optimal sleep cycle wake-up times.")
     parser.add_argument("-q", "--quote", action="store_true", help="Display a random sleep/philosophical quote.")
 
@@ -117,6 +119,10 @@ def main():
     elif args.quote:
         import random
         print(f"\n{MAGENTA}💡 {random.choice(QUOTES)}{RESET}\n")
+    elif args.nap:
+        timer_mode(20 * 60, title="⚡ Power Nap (20m)")
+    elif args.deep:
+        timer_mode(90 * 60, title="🌙 Full REM Cycle (90m)")
     else:
         seconds = parse_duration(args.duration)
         timer_mode(seconds, title="Power Sleep Mode")
