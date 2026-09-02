@@ -66,24 +66,24 @@ def get_time_greeting() -> str:
 
 
 def get_banner() -> str:
-    """猫娘像素高画质左立绘 + 右侧优雅终端信息看板 (参考 Antigravity 终端美学布局)"""
+    """猫娘像素高画质左立绘 + 右侧垂直居中终端信息看板 (参考 Antigravity 终端美学布局)"""
     greeting = get_time_greeting()
     avatar = CATGIRL_FRAMES['happy']
     right_texts = [
         "",
-        f"   {BOLD}{PINK}🌸 sleep-cli · 猫娘伴侣{RESET} {GOLD}[ v2.0 像素高画质版 ]{RESET}",
-        f"   {PURPLE}晚安添い寝与专注小憩タイマー · 二次元萌系桌面伴侣{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   {GOLD}{greeting}{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   {CYAN}🐾 伴侣状态:{RESET} {MINT}软乎乎地趴在枕边{RESET}   |   {CYAN}好感度:{RESET} {PINK}MAX (ฅ^･ω･^ฅ){RESET}",
-        f"   {GOLD}✨ 今夜もご主人様がいい夢を見られますように〜{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   {GRAY}💡 常用快捷命令:{RESET}",
-        f"   {PINK}sleep-cli 25m{RESET}      开启 25 分钟番茄专注/小憩倒计时",
-        f"   {PINK}sleep-cli --nap{RESET}    20 分钟浅睡充电 (うたた寝にゃ)",
-        f"   {PINK}sleep-cli --live{RESET}   启动桌面动态猫娘陪伴模式",
-        f"   {PINK}sleep-cli -c{RESET}       推算 90 分钟 R.E.M 黄金睡眠周期",
+        f"  {BOLD}{PINK}🌸 sleep-cli · 猫娘伴侣{RESET} {GOLD}[ v2.0 像素版 ]{RESET}",
+        f"  {PURPLE}晚安添い寝与专注小憩タイマー · 萌系桌面伴侣{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {GOLD}{greeting}{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {CYAN}🐾 伴侣状态:{RESET} {MINT}软乎乎趴在枕边{RESET} | {CYAN}好感:{RESET} {PINK}MAX (ฅ^･ω･^ฅ){RESET}",
+        f"  {GOLD}✨ 今夜もご主人様がいい夢を見られますように〜{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {GRAY}💡 常用快捷命令:{RESET}",
+        f"  {PINK}sleep-cli 25m{RESET}      25 分钟番茄专注/小憩倒计时",
+        f"  {PINK}sleep-cli --nap{RESET}    20 分钟浅睡充电 (うたた寝にゃ)",
+        f"  {PINK}sleep-cli --live{RESET}   桌面动态猫娘陪伴模式",
+        f"  {PINK}sleep-cli -c{RESET}       推算 90 分钟 R.E.M 睡眠周期",
         ""
     ]
     lines = []
@@ -247,14 +247,14 @@ def fetch_ai_whisper(user_topic: str = "") -> str:
     return f"“{random.choice(actions)} ご主人様、{random.choice(phrases)} おやすみなさいにゃ〜”"
 
 
-def render_progress(current, total, width=22, tick=0) -> str:
-    """流光霓虹渐变动态波浪呼吸进度条"""
+def render_progress(current, total, width=16, tick=0) -> str:
+    """流光霓虹渐变动态波浪呼吸进度条（平缓呼吸节奏）"""
     percent = float(current) / float(total) if total > 0 else 1.0
     filled = int(width * percent)
-    wave_pos = (tick // 2) % max(1, filled) if filled > 0 else 0
+    wave_pos = (tick // 4) % max(1, filled) if filled > 0 else 0
     bar_chars = []
     for i in range(filled):
-        color = GRADIENT_COLORS[(i + tick // 3) % len(GRADIENT_COLORS)]
+        color = GRADIENT_COLORS[(i + tick // 6) % len(GRADIENT_COLORS)]
         ch = "~" if i == wave_pos else "="
         bar_chars.append(f"{color}{ch}{RESET}")
     
@@ -294,58 +294,63 @@ BUBBLE_FRAMES = [
 ]
 
 STATUS_TIPS = [
-    "「 呼噜呼噜… 猫娘在枕边静静陪着ご主人様小憩にゃ🐾 」",
-    "「 听着猫猫均匀的呼吸声，安心把大脑彻底放空吧喵〜 」",
-    "「 闭上眼睛，梦里有一整片软乎乎的小鱼干云朵だニャン✨ 」",
-    "「 无论今天多辛苦，现在只要在猫猫身边安心休息就好喵💤 」",
-    "「 尾巴轻轻搭在主人手背上，ご主人様安心做个好梦にゃ〜 」"
+    "「 呼噜呼噜… 猫娘在枕边静静陪着主人 」",
+    "「 听着猫猫呼吸声，安心把大脑放空喵〜 」",
+    "「 闭上双眼，梦里有一整片小鱼干云朵✨ 」",
+    "「 无论多辛苦，在猫猫身边安心休息就好喵💤 」",
+    "「 尾巴搭在手背上，ご主人様安心做个好梦にゃ〜 」"
 ]
 
 
 def get_companion_state(tick: int):
-    """动态返回猫娘的心情动作、表情帧名称与拟态描述 (6FPS 下 48 帧为 8 秒周期)"""
-    step = tick % 48
-    if step < 24:
-        return "sleepy", "安稳熟睡中", "（在枕边发出舒服的呼噜呼噜声...）", "💤"
-    elif step < 30:
-        return "awake", "悄悄睁开眼", "（眨了眨水灵灵的大眼睛望向主人... 喵？）", "🐾"
-    elif step < 36:
-        return "wink", "俏皮眨眼Wink", "（俏皮地朝主人单眼Wink了一下... ✨）", "✨"
-    elif step < 42:
-        return "happy", "甜甜开怀笑", "（用软乎乎的脸颊蹭了蹭主人的手心...）", "🌸"
+    """
+    动态返回猫娘的心情动作、表情帧名称与拟态描述 (6FPS 下 18 帧为 3 秒活跃周期)。
+    每 0.5~1.0 秒呈现生动表情交互：闭眼熟睡 -> 眨眼望向主人 -> 甜甜单眼Wink -> 开怀微笑 -> 安稳回睡。
+    """
+    step = tick % 18
+    if step < 6:
+        return "sleepy", "安稳熟睡", "（在枕边发出轻柔呼噜声...）", "💤"
+    elif step < 9:
+        return "awake", "悄悄睁眼", "（眨眨大眼睛望向主人喵...）", "🐾"
+    elif step < 12:
+        return "wink", "俏皮眨眼", "（朝主人甜甜Wink了一下✨）", "✨"
+    elif step < 15:
+        return "happy", "甜甜微笑", "（用脸颊蹭蹭主人的手心🌸）", "🌸"
     else:
-        return "sleepy", "渐入梦乡", "（抱着软绵绵的小毯子慢慢合上眼眸...）", "🌙"
+        return "sleepy", "渐入梦乡", "（抱着小毯子合上眼安睡💤）", "🌙"
 
 
 def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_str: str, tick: int, first_render: bool = False):
-    """6FPS 丝滑全彩像素二次元猫娘伴侣动画刷新 (左侧 15 行高画质立绘，右侧终端信息看板)"""
+    """6FPS 丝滑全彩像素二次元猫娘伴侣动画刷新 (左侧 15 行高画质立绘，右侧垂直居中终端看板，严格防折行)"""
     frame_name, mood_title, mood_action, badge = get_companion_state(tick)
     avatar_lines = CATGIRL_FRAMES[frame_name]
-    bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
+    bubble = BUBBLE_FRAMES[(tick // 6) % len(BUBBLE_FRAMES)]  # 每秒平缓变化一次
     tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
 
     mins = total // 60
     secs = total % 60
-    dur_text = f"{mins} 分 {secs} 秒" if secs > 0 else f"{mins} 分钟"
+    dur_text = f"{mins}分{secs}秒" if secs > 0 else f"{mins}分钟"
     remaining = max(0, total - elapsed)
     rem_str = f"{remaining // 60:02d}:{remaining % 60:02d}"
-    progress = render_progress(elapsed, total, tick=tick)
+    progress = render_progress(elapsed, total, width=16, tick=tick)
+    short_title = (title[:10] + "..") if len(title) > 11 else title
 
+    # 15 行右侧信息，与左侧 15 行猫娘立绘完全垂直居中对称 (上下预留 1 行空白边距)
     right_texts = [
-        f"   {bubble}   {GOLD}✨ 今夜もいい夢を見てにゃ〜{RESET}",
-        f"   {BOLD}{PINK}🌸 sleep-cli · 猫娘添い寝タイマー{RESET} {GOLD}[ 深度陪伴 ]{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   {BOLD}当前模式:{RESET} {PINK}{title}{RESET}   |   {BOLD}小憩时长:{RESET} {CYAN}{dur_text}{RESET}",
-        f"   {BOLD}开始时刻:{RESET} {CYAN}{start_time_str}{RESET}   |   {BOLD}伴侣状态:{RESET} {GOLD}{mood_title} {badge}{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   [ 添い寝中🐾 ] {BOLD}{rem_str}{RESET} {progress}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-        f"   {PINK}{tip}{RESET}",
-        f"   {PURPLE}呼噜呼噜... {mood_action}{RESET}",
-        f"   {YELLOW}提示: 随时按 Ctrl+C 可唤醒猫娘结束小憩喵{RESET}",
-        f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
         "",
-        "",
+        f"  {bubble}   {GOLD}✨ 今夜もいい夢を{RESET}",
+        f"  {BOLD}{PINK}🌸 sleep-cli · 猫娘添い寝伴侣{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {BOLD}模式:{RESET} {PINK}{short_title}{RESET}   |   {BOLD}时长:{RESET} {CYAN}{dur_text}{RESET}",
+        f"  {BOLD}开始:{RESET} {CYAN}{start_time_str}{RESET}   |   {BOLD}状态:{RESET} {GOLD}{mood_title} {badge}{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  [ 添い寝中🐾 ] {BOLD}{rem_str}{RESET}",
+        f"  {progress}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {PINK}{tip}{RESET}",
+        f"  {PURPLE}{mood_action}{RESET}",
+        f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+        f"  {YELLOW}提示: 随时按 Ctrl+C 可唤醒猫娘喵{RESET}",
         ""
     ]
 
@@ -361,7 +366,7 @@ def render_live_timer_screen(elapsed: int, total: int, title: str, start_time_st
 
 
 def live_companion_mode():
-    """桌面全彩高画质像素猫娘动态陪伴模式"""
+    """桌面全彩高画质像素猫娘动态陪伴模式 (垂直居中紧凑看板，严格防折行)"""
     print(f"\n🐾 正在启动桌面像素高画质猫娘伴侣... 随时按 Ctrl+C 退出喵\n")
     time.sleep(0.5)
     sys.stdout.write("\033[?25l")  # 隐藏光标防闪烁
@@ -374,7 +379,7 @@ def live_companion_mode():
             t_start = time.monotonic()
             frame_name, mood_title, mood_action, badge = get_companion_state(tick)
             avatar_lines = CATGIRL_FRAMES[frame_name]
-            bubble = BUBBLE_FRAMES[tick % len(BUBBLE_FRAMES)]
+            bubble = BUBBLE_FRAMES[(tick // 6) % len(BUBBLE_FRAMES)]
             tip = STATUS_TIPS[(tick // 24) % len(STATUS_TIPS)]
             now_str = datetime.now().strftime("%H:%M:%S")
 
@@ -382,20 +387,20 @@ def live_companion_mode():
                 sys.stdout.write(f"\033[{TOTAL_LINES}A")
 
             right_texts = [
-                f"   {bubble}   {GOLD}✨ 今夜もいい夢を見てにゃ〜{RESET}",
-                f"   {BOLD}{PINK}🌸 sleep-cli · 桌面动态猫娘伴侣{RESET} {GOLD}[ 实时陪伴 ]{RESET}",
-                f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-                f"   {BOLD}当前时刻:{RESET} {CYAN}{now_str}{RESET}   |   {BOLD}猫娘好感:{RESET} {PINK}MAX (ฅ^･ω･^ฅ){RESET}",
-                f"   {BOLD}猫娘心情:{RESET} {GOLD}{mood_title} {badge}{RESET}",
-                f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-                f"   {PINK}{tip}{RESET}",
-                f"   {PURPLE}呼噜呼噜... {mood_action}{RESET}",
-                f"   {DARK_GRAY}──────────────────────────────────────────{RESET}",
-                f"   {YELLOW}🐾 猫娘正在桌面上轻晃猫耳打呼噜 (按 Ctrl+C 退出){RESET}",
                 "",
-                "",
-                "",
-                "",
+                f"  {bubble}   {GOLD}✨ 今夜もいい夢を{RESET}",
+                f"  {BOLD}{PINK}🌸 sleep-cli · 桌面动态猫娘伴侣{RESET}",
+                f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+                f"  {BOLD}当前时刻:{RESET} {CYAN}{now_str}{RESET}   |   {BOLD}好感:{RESET} {PINK}MAX (ฅ^･ω･^ฅ){RESET}",
+                f"  {BOLD}猫娘心情:{RESET} {GOLD}{mood_title} {badge}{RESET}",
+                f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+                f"  [ 实时陪伴中🐾 ] {CYAN}呼噜呼噜... 打盹中{RESET}",
+                f"  {PINK}{tip}{RESET}",
+                f"  {PURPLE}{mood_action}{RESET}",
+                f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+                f"  {YELLOW}🐾 猫娘正在桌面上轻晃猫耳打呼噜 (按 Ctrl+C 退出){RESET}",
+                f"  {DARK_GRAY}──────────────────────────────────{RESET}",
+                f"  {GOLD}✨ 今夜もいい夢を見てにゃ〜{RESET}",
                 ""
             ]
 
