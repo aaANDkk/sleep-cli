@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 sleep-cli: 猫娘の添い寝伴侣 · 晚安与专注の小憩タイマー。
 """
