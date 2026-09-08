@@ -1,22 +1,15 @@
 # 🐾 𝑠𝑙𝑒𝑒𝑝-𝑐𝑙𝑖 · 猫娘の安眠伴侣
 
-```text
-  ▄▀▀▄▄         ▀▄       ▄▄▀▀▄  
-  ▀▀▀▀▀▀▀▄▄ ▄▀▀▀▀▄▄▄ ▄▄▀▀▀▀▀▀▀     🌸 sleep-cli · 猫娘伴侣 [ v2.0 像素高画质版 ]
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀     晚安添い寝与专注小憩タイマー · 二次元萌系桌面伴侣
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀     ──────────────────────────────────────────
-   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄     「 夜深了にゃ… 屏幕很伤眼睛，快来和猫娘一起钻进被窝おやすみ〜 」
-   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀     ──────────────────────────────────────────
-   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄     🐾 伴侣状态: 软乎乎地趴在枕边   |   好感度: MAX (ฅ^･ω･^ฅ)
- ▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ✨ 今夜もご主人様がいい夢を見られますように〜
-  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   ──────────────────────────────────────────
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄   💡 常用快捷命令:
-▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   sleep-cli 25m      开启 25 分钟番茄专注/小憩倒计时
-▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀   sleep-cli --nap    20 分钟浅睡充电 (うたた寝にゃ)
-   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      sleep-cli --live   启动桌面动态猫娘陪伴模式
-     ▀  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀        sleep-cli -c       推算 90 分钟 R.E.M 黄金睡眠周期
-         ▀▀▀▀▀▀▀▀▀▀▀▀▀▀         
-```
+<p align="center">
+  <img src="assets/banner.png" alt="sleep-cli · 猫娘伴侣" width="100%">
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ff69b4.svg" alt="License: MIT"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.7+-4B8BBE.svg?logo=python&logoColor=white" alt="Python 3.7+"></a>
+  <img src="https://img.shields.io/badge/Companion-Catgirl_MAX-ffb6c1.svg" alt="Companion">
+  <img src="https://img.shields.io/badge/Zero-Dependencies-success.svg" alt="Zero Dependencies">
+</p>
 
 > **「 ご主人様、今日も一日お疲れ様でしたにゃ！ 晚安与专注の全彩像素二次元猫娘添い寝タイマー 」**
 
